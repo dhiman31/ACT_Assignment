@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 const emailvalidator = require("email-validator");
+const bcrypt = require('bcrypt')
+const {saltRounds} = require('../config/serverConfig')
 
 const userSchema = new mongoose.Schema({
     firstName : {
@@ -15,7 +17,9 @@ const userSchema = new mongoose.Schema({
         type : String,
         trim: true,
         validate: {
-            validator: emailvalidator,
+            validator: function(value) {
+                return emailvalidator.validate(value);
+            },
             message: '{VALUE} is not a valid email'
         }
     },
@@ -24,6 +28,10 @@ const userSchema = new mongoose.Schema({
         required : true
     }
 })
+
+userSchema.pre('save', async function () {
+    this.password = await bcrypt.hash(this.password, saltRounds);
+});
 
 const User = mongoose.model('User' , userSchema)
 module.exports = User
