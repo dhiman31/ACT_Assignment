@@ -8,7 +8,8 @@ class userRepository {
                 firstName : data.firstName,
                 lastName : data.lastName,
                 emailId : data.emailId,
-                password : data.password
+                password : data.password,
+                role : data.role
             })
             return user;
         } catch (error) {
@@ -16,7 +17,6 @@ class userRepository {
             throw error
         }
     }
-
 }
 
 module.exports = userRepository

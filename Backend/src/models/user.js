@@ -4,6 +4,12 @@ const bcrypt = require('bcrypt')
 const {saltRounds} = require('../config/serverConfig')
 
 const userSchema = new mongoose.Schema({
+
+    role: {
+        type: String,
+        enum: ["ADMIN", "CLIENT"],
+        required : true
+    },
     firstName : {
         type : String,
         required : true,

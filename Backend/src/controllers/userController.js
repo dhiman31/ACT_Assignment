@@ -11,7 +11,7 @@ const signup = async (req,res) => {
             err : {}
         })
     } catch (error) {
-        console.log("Error in controller")
+        console.log(error)
         return res.status(501).json({
             data:{},
             success:false,
@@ -23,19 +23,25 @@ const signup = async (req,res) => {
 
 const login = async (req,res) => {
     try {
-        const token = await userServ.login({
+        const response = await userServ.login({
             emailId : req.body.emailId,
-            password : req.body.password
+            password : req.body.password,
+            role : req.body.role
         })
 
+        console.log("Recieved response : ",response)
+
         return res.status(201).json({
-            data: token,
+            data: {
+                token:response.token,
+                user:{firstName:response.user.firstName,role:req.body.role}
+            },
             success: true,
             message : "User logged in successfully",
             err : {}
         })
     } catch (error) {
-        console.log("Error in controller")
+        console.log(error)
         return res.status(501).json({
             data:{},
             success:false,
