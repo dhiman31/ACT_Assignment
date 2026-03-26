@@ -1,9 +1,11 @@
 const bodyParser = require('body-parser')
 const express = require('express')
-const PORT = 3000
+const {PORT} = require('./config/serverConfig')
+const connection = require('./config/dbConfig')
 
 const setUpAndStartServer = () => {
     
+    connection();
     const app = express()
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({extended:true}))
