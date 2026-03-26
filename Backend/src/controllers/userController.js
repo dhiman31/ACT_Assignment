@@ -21,6 +21,31 @@ const signup = async (req,res) => {
     }
 }
 
+const login = async (req,res) => {
+    try {
+        const token = await userServ.login({
+            emailId : req.body.emailId,
+            password : req.body.password
+        })
+
+        return res.status(201).json({
+            data: token,
+            success: true,
+            message : "User logged in successfully",
+            err : {}
+        })
+    } catch (error) {
+        console.log("Error in controller")
+        return res.status(501).json({
+            data:{},
+            success:false,
+            message : "Could not login!",
+            err : error
+        })
+    }
+}
+
 module.exports = {
-    signup
+    signup,
+    login
 }
