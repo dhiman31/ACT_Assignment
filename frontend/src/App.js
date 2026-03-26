@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
-import ProtectedRoute from "./components/ProtectedRoute";
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');

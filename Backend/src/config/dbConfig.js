@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const connection = () => {
-    mongoose.connect('mongodb://localhost/actAssignment_db_dev')
+    mongoose.connect(process.env.MONGO_URI)
 }
 
 module.exports = connection

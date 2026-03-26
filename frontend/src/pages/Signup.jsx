@@ -35,7 +35,7 @@ export default function Signup() {
     }
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3001/v1/user/signup', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/v1/user/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
