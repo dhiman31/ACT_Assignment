@@ -1,21 +1,30 @@
+const { JWT_SECRET } = require('../config/serverConfig')
 const userService = require('../services/userService')
 const userServ = new userService
+const jwt = require('jsonwebtoken')
 
 const signup = async (req,res) => {
     try {
-        const user = await userServ.signup(req.body)
+        if (!req.body.emailId || !req.body.password) {
+            return res.status(400).json({
+                success : false,
+                message : "Enter credentials"
+            })
+        }
+        const response = await userServ.signup(req.body)
+        
         return res.status(201).json({
-            data: user,
+            data: response,
             success: true,
             message : "User signed up successfully",
             err : {}
         })
     } catch (error) {
         console.log(error)
-        return res.status(501).json({
+        return res.status(400).json({
             data:{},
             success:false,
-            message : "Could not signup!",
+            message : error.message || "Could not signup!",
             err : error
         })
     }
@@ -29,9 +38,9 @@ const login = async (req,res) => {
             role : req.body.role
         })
 
-        console.log("Recieved response : ",response)
+        console.log("Received response : ",response)
 
-        return res.status(201).json({
+        return res.status(200).json({
             data: {
                 token:response.token,
                 user:{firstName:response.user.firstName,role:req.body.role}
@@ -42,10 +51,10 @@ const login = async (req,res) => {
         })
     } catch (error) {
         console.log(error)
-        return res.status(501).json({
+        return res.status(400).json({
             data:{},
             success:false,
-            message : "Could not login!",
+            message : error.message || "Could not login!",
             err : error
         })
     }

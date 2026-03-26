@@ -9,11 +9,10 @@ class userRepository {
                 lastName : data.lastName,
                 emailId : data.emailId,
                 password : data.password,
-                role : data.role
+                role : "CLIENT"
             })
             return user;
         } catch (error) {
-            console.log(error)
             throw error
         }
     }

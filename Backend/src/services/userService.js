@@ -12,10 +12,15 @@ class userService{
     async signup(data){
         try {
             const user = await this.userRepo.signup(data);
-            return user
-
+            const token = jwt.sign(
+                { emailId: user.emailId, role: user.role },
+                JWT_SECRET
+            );
+            return {
+                token,
+                user:{firstName:user.firstName,role:"CLIENT"}
+            };
         } catch (error) {
-            console.log("Error in service layer")
             throw error
         }
     }
@@ -26,13 +31,11 @@ class userService{
             const password = data.password
             const role = data.role
             if(!emailId || !password || !role){
-                console.log("Enter credentials!!")
                 throw new Error("Enter credentials!!")
             }
 
             const user = await User.findOne({emailId,role})
             if(!user){
-                console.log("User does not exist")
                 throw new Error("User does not exist")
             }
 
@@ -40,7 +43,6 @@ class userService{
 
             const isMatch = await bcrypt.compare(password, user.password);
             if(!isMatch){
-                console.log("Wrong password entered")
                 throw new Error("Wrong password entered")
             }
 
@@ -53,7 +55,6 @@ class userService{
             }
 
         } catch (error) {
-            console.log("Error in login service")
             throw error
         }
     }

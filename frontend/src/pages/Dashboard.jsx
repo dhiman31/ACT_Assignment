@@ -1,182 +1,75 @@
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const leads = [
-  { id: 1, name: "Priya Sharma", company: "TechNova", status: "New" },
-  { id: 2, name: "Rahul Gupta", company: "Infosys Ltd.", status: "Contacted" },
-  { id: 3, name: "Sneha Mehta", company: "StartupX", status: "Qualified" },
-  { id: 4, name: "Arjun Verma", company: "BuildCo", status: "Closed" },
+const cards = [
+  { icon: '📊', label: 'Analytics', desc: 'View your usage insights' },
+  { icon: '⚙️', label: 'Settings', desc: 'Manage account preferences' },
+  { icon: '🔔', label: 'Notifications', desc: 'Check recent alerts' },
+  { icon: '📁', label: 'Projects', desc: 'Browse your workspace' },
 ];
-
-const tasks = [
-  { id: 1, title: "Follow up with Priya", due: "Today", done: false },
-  { id: 2, title: "Send proposal to Rahul", due: "Tomorrow", done: false },
-  { id: 3, title: "Schedule demo for StartupX", due: "Mar 28", done: true },
-  { id: 4, title: "Review Q1 leads report", due: "Mar 30", done: false },
-];
-
-const users = [
-  { id: 1, name: "Amit Joshi", role: "Admin", email: "amit@example.com" },
-  { id: 2, name: "Divya Singh", role: "Client", email: "divya@example.com" },
-  { id: 3, name: "Rohan Patel", role: "Client", email: "rohan@example.com" },
-];
-
-const statusColors = {
-  New: "bg-blue-100 text-blue-700",
-  Contacted: "bg-yellow-100 text-yellow-700",
-  Qualified: "bg-green-100 text-green-700",
-  Closed: "bg-gray-100 text-gray-600",
-};
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
-  // Try to get user info from localStorage
-  const raw = localStorage.getItem("user");
-  const user = raw ? JSON.parse(raw) : null;
-  const displayName = user?.firstName || "User";
+  useEffect(() => {
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      try { setUser(JSON.parse(stored)); } catch { setUser(null); }
+    }
+  }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navbar */}
-      <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-        <span className="text-base font-semibold text-gray-800">Dashboard</span>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-500">
-            Hello, <span className="text-gray-800 font-medium">{displayName}</span>
-          </span>
-          <button
-            onClick={handleLogout}
-            className="text-sm text-red-500 hover:text-red-600 transition"
-          >
-            Logout
-          </button>
+    <div className="min-h-screen bg-gray-950 text-white">
+
+      {/* Topbar */}
+      <header className="bg-gray-900 border-b border-gray-800 px-8 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-indigo-400 text-xl">◈</span>
+          <span className="font-extrabold tracking-widest text-lg">
+Avyukt Core Technology</span>
         </div>
+        <button
+          onClick={handleLogout}
+          className="border border-gray-700 hover:border-indigo-500 hover:text-indigo-400 text-gray-400 text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+        >
+          Sign Out
+        </button>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-8 space-y-8">
-        {/* Stats row */}
-        <div className="grid grid-cols-3 gap-4">
-          {[
-            { label: "Total Leads", value: leads.length },
-            { label: "Open Tasks", value: tasks.filter((t) => !t.done).length },
-            { label: "Team Members", value: users.length },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-white border border-gray-200 rounded p-4">
-              <p className="text-sm text-gray-500">{stat.label}</p>
-              <p className="text-2xl font-semibold text-gray-800 mt-1">{stat.value}</p>
-            </div>
-          ))}
+      {/* Hero */}
+      <section className="flex flex-col items-center py-14 px-4 text-center">
+        <div className="p-0.5 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 mb-5">
+          <div className="w-20 h-20 rounded-full bg-gray-900 flex items-center justify-center text-3xl font-extrabold text-indigo-400">
+            {user?.firstName ? user.firstName[0].toUpperCase() : '?'}
+          </div>
         </div>
+        <h2 className="text-3xl font-bold mb-2">
+          Hello, <span className="text-indigo-400">{user?.firstName || 'User'}</span> 👋
+        </h2>
+        <span className="inline-block bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-bold tracking-widest px-4 py-1.5 rounded-full uppercase">
+          {user?.role || 'CLIENT'}
+        </span>
+      </section>
 
-        {/* Leads */}
-        <section>
-          <h2 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">
-            Leads
-          </h2>
-          <div className="bg-white border border-gray-200 rounded overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  {["Name", "Company", "Status"].map((h) => (
-                    <th
-                      key={h}
-                      className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide"
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {leads.map((lead) => (
-                  <tr key={lead.id} className="hover:bg-gray-50 transition">
-                    <td className="px-4 py-3 text-gray-800 font-medium">{lead.name}</td>
-                    <td className="px-4 py-3 text-gray-500">{lead.company}</td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`px-2 py-0.5 rounded text-xs font-medium ${statusColors[lead.status]}`}
-                      >
-                        {lead.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {/* Cards */}
+      <main className="max-w-3xl mx-auto px-6 pb-16 grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {cards.map(({ icon, label, desc }) => (
+          <div
+            key={label}
+            className="bg-gray-900 border border-gray-800 hover:border-indigo-500/50 rounded-2xl p-6 cursor-pointer transition-colors group"
+          >
+            <div className="text-3xl mb-4">{icon}</div>
+            <div className="font-bold text-sm text-white group-hover:text-indigo-400 transition-colors mb-1">{label}</div>
+            <div className="text-xs text-gray-500">{desc}</div>
           </div>
-        </section>
-
-        {/* Tasks */}
-        <section>
-          <h2 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">
-            Tasks
-          </h2>
-          <div className="bg-white border border-gray-200 rounded divide-y divide-gray-100">
-            {tasks.map((task) => (
-              <div key={task.id} className="flex items-center justify-between px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`w-2 h-2 rounded-full ${task.done ? "bg-gray-300" : "bg-green-400"}`}
-                  />
-                  <span
-                    className={`text-sm ${task.done ? "line-through text-gray-400" : "text-gray-700"}`}
-                  >
-                    {task.title}
-                  </span>
-                </div>
-                <span className="text-xs text-gray-400">{task.due}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Users */}
-        <section>
-          <h2 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">
-            Users
-          </h2>
-          <div className="bg-white border border-gray-200 rounded overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  {["Name", "Email", "Role"].map((h) => (
-                    <th
-                      key={h}
-                      className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide"
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-gray-50 transition">
-                    <td className="px-4 py-3 text-gray-800 font-medium">{u.name}</td>
-                    <td className="px-4 py-3 text-gray-500">{u.email}</td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`px-2 py-0.5 rounded text-xs font-medium ${
-                          u.role === "Admin"
-                            ? "bg-purple-100 text-purple-700"
-                            : "bg-gray-100 text-gray-600"
-                        }`}
-                      >
-                        {u.role}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
+        ))}
       </main>
     </div>
   );
